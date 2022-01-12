@@ -1,0 +1,292 @@
+ACTOR BerettaM9 : Weapon 20000
+{
+ //$Category weapons
+ Weapon.SelectionOrder 1000
+ Weapon.AmmoType "BM9Clip"
+ Weapon.AmmoGive 0
+ Weapon.AmmoUse	1
+ Weapon.AmmoType2 "BM9Ammo"
+ Weapon.AmmoUse2 0
+ Weapon.AmmoGive2 15 //45
+ Weapon.SlotNumber 2
+ AttackSound "sounds/weapons/beretta/"
+ Inventory.Pickupmessage "You got the Beretta M9."
+ Weapon.BobStyle "Alpha"
+ Weapon.BobSpeed 1.2
+ Scale 0.15
+ +AMMO_OPTIONAL
+ +NOAUTOFIRE
+ +NOEXTREMEDEATH
+ 
+ States
+ {
+ PreReady:
+  BRTT A 6
+  BRTT A 1 A_ClearOverlays(2, 3, 1)
+ Ready:
+  BRTT A 1 A_WeaponReady(WRF_ALLOWRELOAD)
+  Loop
+ AltReady:
+  BRTT A 1 A_WeaponReady(WRF_ALLOWRELOAD)
+  Loop
+ Deselect:
+  BRTT A 1 A_PlaySound("BUNEQUIP",1,1)
+  TNT1 A 0 A_TakeInventory("BM9SteadyUp", 1)
+ DeselectLoop:
+  BRTT A 1 A_Lower
+  Goto DeselectLoop
+ Select:
+  BRTT A 1 A_PlaySound("BEQUIP",1,1)
+  BRTT A 1 A_Raise
+  Goto Select+1
+ Fire:
+  TNT1 A 0 A_JumpIfInventory("BM9SteadyUp", 1, "SteadyFire")
+  BRTT A 0 A_JumpIfNoAmmo("DryFire")
+  BRTT B 1 A_PlaySound("BERRSHOT",1,1) //BSHOTC
+  BRTT C 1 A_Quake(2,4,0,2)
+  BRTT E 0 Bright A_GunFlash
+  BRTT E 0 A_SetPitch(pitch + (random(2,4)))
+  BRTT E 0 A_SetPitch(pitch -(random(2,5)))
+  BRTT E 1 A_FireCustomMissile("BerettaSmokeSpawn",0,0,6,8)
+  BRTT F 1 A_FireBullets(4,5,-1,6,"BulletPuff",1)
+  BRTT G 0 A_SpawnDebris("9mmdebris")
+  BRTT GHIJKLGO 1 A_WeaponReady
+  Goto Ready
+ SteadyFire:
+  BRTT A 0 A_JumpIfNoAmmo("DryFire")
+  BRTT B 1 A_PlaySound("BERRSHOT",1,1) //BSHOTC
+  BRTT C 1 A_Quake(2,1,0,1)
+  BRTT E 0 Bright A_GunFlash
+  BRTT E 0 A_SetPitch(pitch+(random(1,2)))
+  BRTT E 0 A_SetPitch(pitch-(random(1,2)))
+  BRTT E 1 Bright A_FireCustomMissile("BerettaSmokeSpawn",0,0,6,8)
+  BRTT F 1 Bright A_FireBullets(1,1,-1,random(8,9),"BulletPuff",1)
+  BRTT F 0 A_SpawnDebris("9mmdebris")
+  BRTT G 1 A_OverlayOffset(2,0,2,WOF_INTERPOLATE)
+  BRTT H 1 A_OverlayOffset(2,0,6,WOF_INTERPOLATE)
+  BRTT I 1 A_OverlayOffset(2,0,12,WOF_INTERPOLATE)
+  BRTT J 1 A_OverlayOffset(2,0,6,WOF_INTERPOLATE)
+  BRTT K 1 A_OverlayOffset(2,0,2,WOF_INTERPOLATE)
+  BRTT LG 1
+  BRTT O 1 A_WeaponReady
+  Goto AltReady
+ AFireOverlay:
+  BHND ABCDEFG 1
+ AFireOverlayStop:
+  BHND G 1
+  Loop
+ AFireOverlayLower:
+  BRTT A 1 A_Overlay(3, "AFireOverlayLowerAnim", TRUE)
+  BRTT A 1 A_OverlayFlags(3, PSPF_ADDWEAPON, 1)
+  BRTT A 1 A_ClearOverlays(2, 2, 1)
+  BRTT A 0 A_ZoomFactor(1.00)
+  TNT1 A 0 A_TakeInventory("BM9SteadyUp", 1)
+  Goto PreReady
+ AFireOverlayLowerAnim:
+  BHND GFEDCBA 1
+ AFireOverlayLowerAnimStop:
+  TNT1 A 1
+  Loop
+ AltFire:
+  TNT1 A 0 A_JumpIfInventory("BM9SteadyUp", 1, "AFireOverlayLower")
+  TNT1 A 0 A_GiveInventory("BM9SteadyUp", 1)
+  BRTT A 1 A_Overlay(2, "AFireOverlay", TRUE)
+  BRTT A 1 A_OverlayFlags(2, PSPF_ADDWEAPON, 1)
+  BRTT A 0 A_ZoomFactor(1.10, ZOOM_NOSCALETURNING)
+  Goto AltReady
+ DryFire:
+  BRTT A 1 Offset(1,30) A_PlaySound("DRYFIRE",1,1)
+  BRTT B 1 Offset(1,31)
+  BRTT C 1 Offset(1,32)
+  BRTT D 1 Offset(1,33)
+  BRTT E 3
+  Goto Ready
+ Reload:
+  TNT1 A 0 A_JumpIfInventory("BM9SteadyUp", 1, "SteadyReload")
+  BRTT A 0 A_JumpIfInventory("BM9Clip",15,2) //Do nothing if full mag capacity
+  BRTT A 0 A_JumpIfInventory("BM9Ammo",1,"ReloadWork") //Go to ReloadWork state if not full
+  BRTT A 1
+  Goto Ready
+ SteadyReload:
+  BRTT A 0 A_JumpIfInventory("BM9Clip",15,2) //Do nothing if full mag capacity
+  BRTT A 0 A_JumpIfInventory("BM9Ammo",1,"SteadyReloadWork") //Go to ReloadWork state if not full
+  BRTT A 1
+  Goto AltReady
+ ReloadWork:
+  BRTT A 1 Offset(1,20) A_PlaySound("BEJECT",1,1) //Need to add reload animation frames
+  BTTR A 1 Offset(2,21)
+  BTTR B 1 Offset(3,22)
+  BTTR C 1 Offset(4,23)
+  BTTR D 1 Offset(5,24)
+  BTTR E 2 Offset(6,25)
+  BTTR F 2 Offset(6,25)
+  BTTR G 6 Offset(6,25)
+ ReloadLoop: //WildWeasel's Reload Loop Tutorial
+  TNT1 A 0 A_JumpIfInventory("BM9Clip", 15, "ReloadFinish") //Finish if gun is full
+  TNT1 A 0 A_TakeInventory("BM9Ammo", 1) //Take 1 from reserve
+  TNT1 A 0 A_GiveInventory("BM9Clip", 1) //Give one back to gun
+  TNT1 A 0 A_JumpIfInventory("BM9Ammo", 1, "ReloadLoop") //If gun isn't full, give another bullet
+  Goto ReloadFinish // And if it's not full but there's no reserve ammo, finish up anyway.
+ SteadyReloadWork:
+  BRTT A 1 A_Overlay(3, "AFireOverlayLowerAnim", TRUE)
+  BRTT A 1 A_OverlayFlags(3, PSPF_ADDWEAPON, 1)
+  BRTT A 1 A_ClearOverlays(2, 2, 1)
+  BRTT A 1 Offset(1,20) A_PlaySound("BEJECT",1,1) //Need to add reload animation frames
+  BTTR A 1 Offset(2,21)
+  BTTR B 1 Offset(3,22)
+  BTTR C 1 Offset(4,23)
+  BTTR D 1 Offset(5,24)
+  BTTR E 2 Offset(6,25)
+  BTTR F 2 Offset(6,25)
+  BTTR G 6 Offset(6,25)
+ SteadyReloadLoop: //WildWeasel's Reload Loop Tutorial
+  TNT1 A 0 A_JumpIfInventory("BM9Clip", 15, "SteadyFinish") //Finish if gun is full
+  TNT1 A 0 A_TakeInventory("BM9Ammo", 1) //Take 1 from reserve
+  TNT1 A 0 A_GiveInventory("BM9Clip", 1) //Give one back to gun
+  TNT1 A 0 A_JumpIfInventory("BM9Ammo", 1, "SteadyReloadLoop") //If gun isn't full, give another bullet
+  Goto SteadyFinish // And if it's not full but there's no reserve ammo, finish up anyway.
+ ReloadFinish:
+  BTTR G 6 Offset(6,25) A_PlaySound("BINSERT",1,1)
+  BTTR H 2 Offset(6,25)
+  BTTR I 2 Offset(5,24)
+  BTTR J 2 Offset(4,23)
+  BTTR K 10 Offset(3,22)
+  BTTR L 1 Offset(3,22) A_PlaySound("BERETTAC",1,1)
+  BTTR M 10 Offset(3,22)
+  BTTR N 1 Offset(2,21)
+  BTTR A 1 Offset(1,20)
+  BRTT A 1 Offset(1,20)
+  Goto Ready
+ SteadyFinish:
+  BTTR G 6 Offset(6,25) A_PlaySound("BINSERT",1,1)
+  BTTR H 2 Offset(6,25)
+  BTTR I 2 Offset(5,24)
+  BTTR J 2 Offset(4,23)
+  BTTR K 10 Offset(3,22)
+  BTTR L 1 Offset(3,22) A_PlaySound("BERETTAC",1,1)
+  BTTR M 10 Offset(3,22)
+  BTTR N 1 Offset(2,21)
+  BTTR A 1 A_Overlay(2, "AFireOverlay", 1)
+  BTTR A 1 A_OverlayFlags(2, PSPF_ADDWEAPON, 1)
+  BRTT A 1 A_ClearOverlays(3, 3, 1)
+  BTTR A 1 Offset(1,20)
+  BRTT A 1 Offset(1,20)
+  Goto AltReady
+ Flash:
+  BRTT M 1 Bright A_Light(20)
+  BRTT N 1 Bright A_Light(10)
+  Goto LightDone
+ Spawn:
+  BTTA Z -1
+  Stop
+ }
+}
+
+ACTOR BM9Ammo : Ammo replaces Clip
+{
+	//$Category ammunition
+	Inventory.MaxAmount 255
+	Inventory.PickupMessage "9mm pistol ammo"
+	Inventory.Amount 15
+	Inventory.PickupSound "BERETTAC"
+	Inventory.Icon "CLIPA0"
+	Ammo.BackpackAmount 30
+	Ammo.BackpackMaxAmount 255
+	Ammo.DropAmount 15
+	Scale 0.50
+	-DROPPED
+	+IGNORESKILL
+	States
+	{
+	Spawn:
+	    	CLIP A -1
+	    	STOP
+	}
+}
+
+ACTOR BM9Clip : Ammo 30002
+{
+	Inventory.MaxAmount 15
+	Inventory.Icon "CLIPA0"
+	-DROPPED
+	+IGNORESKILL
+}
+
+ACTOR BM9AmmoBox : BM9Ammo replaces ClipBox
+{
+	Inventory.PickupMessage "A box of Beretta M9 ammo."
+    Inventory.Amount 50
+    States
+    {
+      Spawn:
+      AMMO A -1
+      Stop
+  }
+}
+
+ACTOR 9mmdebris
+{
+  health 1
+  scale 0.3
+  Radius 1
+  Height 1
+  AttackSound "sounds/weapons/beretta/"
+  +FORCEYBILLBOARD
+  +DOOMBOUNCE
+  +DONTSPLASH
+  -SOLID
+  States
+  {
+  Spawn:
+    TNT1 A 1
+    BTTA Y 1
+	BTTA Y 1 A_PlaySound("9MMSH",1,1)
+	BTTA Y -1
+    Loop
+  }
+}
+
+ACTOR BerettaSmokeSpawn
+{
+    Radius 1
+    Height 1
+    Speed 50
+    PROJECTILE
+    States
+    {
+    Spawn:
+        TNT1 A 1
+        TNT1 A 0 A_Die
+        Goto Death
+    Death:
+        TNT1 A 0 A_SpawnProjectile("BerettaSmoke",-6,-6,0)
+        Stop
+    }
+}
+
+ACTOR BerettaSmoke
+{
+	Radius		1
+	Height		1
+	RenderStyle ADD
+	Alpha		.6
+	Scale		.10
+	+NOGRAVITY
+	+NOBLOCKMAP
+	+FLOORCLIP
+	States
+	{
+	Spawn:
+		SMOK ABCDEFGHIJKLMNOPQRSTUVWX 1 
+		Stop
+	}
+}
+
+//Tokens
+
+//Misc Weapon/Armor Checks
+
+Actor BM9SteadyUp : Inventory 
+{ 	
+	Inventory.MaxAmount 1 
+}

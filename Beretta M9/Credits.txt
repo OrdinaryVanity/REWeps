@@ -1,0 +1,14 @@
+Gun Models:
+Beretta M9 reference - https://www.turbosquid.com/3d-models/black-beretta-m9-pistol-obj/701154
+			   - made by statyk
+
+FX and code help:
+Wildweasel - GunLabz tutorials for pretty much every bit of code here, and
+ 			 for sprites from WW-Diaz to help figure out dimensions.
+			 
+OpenGameArt - Smoke FX by Beast: https://opengameart.org/content/smoke-aura
+
+BlueShadow - Help with CustomInventory for the Benelli.
+
+Sounds:
+All sounds from Resident Evil 3: Nemesis.
