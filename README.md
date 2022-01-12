@@ -17,6 +17,7 @@ Each weapon is contained in a PK3 for easy editing. As of now, they are written 
   <li>Beretta does a lot of damage. Should be nerfed.</li>
   <li>Benelli may need a reload speed increase.</li>
   <li>Benelli does not have a shell casing sprite for shell ejections due to me not knowing where the sprites came from. They have been removed, but the code is still there.</li>
+  <li>Benelli does not have an alt-fire.</li>
 </ul>
 <h2>Credits</h2>
 Credits are contained in each PK3.
